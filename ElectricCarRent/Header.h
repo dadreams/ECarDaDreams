@@ -61,14 +61,7 @@
 #define APP_SECRET      @"d4624c36b6795d1d99dcf0547af5443d" // appsecret
 // 商户号，填写商户对应参数
 #define MCH_ID          @"1285274401"
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
-// 商户API密钥，填写相应参数
+
 #define PARTNER_ID      @"DadreamsTech9581mOOv1111khcycxme"
 // 支付结果回调页面
 #define NOTIFY_URL      [NSString stringWithFormat:@"%@car/pay/wxpayCar.do", ServerURL]
