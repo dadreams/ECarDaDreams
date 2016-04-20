@@ -685,6 +685,8 @@ typedef void(^DelayBlock)();
         
         //        [self delayHidHUD:@"蓝牙连接成功"];
         //        [self delayHidHUD:@"蓝牙连接成功"];
+        //        [self delayHidHUD:@"蓝牙连接成功"];
+        //        [self delayHidHUD:@"蓝牙连接成功"];
     } else {
 //        [self delayHidHUD:@"蓝牙连接失败，正在重新连接"];
         _isFirst = NO;
