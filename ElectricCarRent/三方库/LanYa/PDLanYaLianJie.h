@@ -19,6 +19,10 @@
 // 接收到数据
 - (void)LanYaReceiveMessegeData:(NSData *)data;
 
+@optional
+// 蓝牙信号强度读取
+- (void)LanYaXinHaoQiangDu:(NSNumber *)xinC;
+
 @end
 
 @interface PDLanYaLianJie : NSObject
@@ -43,7 +47,10 @@
 
 - (void)deallocSharedLanYa;
 
-// 开始测试蓝牙信号强度
+// 开始测试蓝牙信号强度  自带定时
 - (void)cansaoXinHaoQiangduBegin;
+
+// 一次性读取蓝牙强度
+- (void)xinhaoQinagDu;
 
 @end
