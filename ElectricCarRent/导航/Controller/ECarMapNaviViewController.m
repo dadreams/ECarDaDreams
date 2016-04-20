@@ -441,7 +441,7 @@ typedef void(^DelayBlock)();
     }
     
     if (self.lanya.lanYaStatus == YES) {
-        [self delayHidHUD:@"蓝牙开双闪"];
+        [self delayHidHUD:@"开双闪"];
         [self openLampClicked];
         return;
     }
@@ -680,7 +680,7 @@ typedef void(^DelayBlock)();
 {
     if (isSuccess) {
         [self hideHUD];
-//         [self.lanya cansaoXinHaoQiangduBegin];
+         [self.lanya cansaoXinHaoQiangduBegin];
 //        [self delayHidHUD:@"蓝牙连接成功"];
     } else {
 //        [self delayHidHUD:@"蓝牙连接失败，正在重新连接"];

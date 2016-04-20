@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSString * notigyCharacterName;
 @property (nonatomic, strong) CBService * service;
 @property (nonatomic, strong) CBCharacteristic * curretCharacterist;
+@property (nonatomic, assign) BOOL isLanYaLianJie;
 
 @end
 
@@ -34,12 +35,14 @@ static PDLanYaLianJie *config = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         config = [[PDLanYaLianJie alloc] init];
+        config.isLanYaLianJie = YES;
     });
     return config;
 }
 
 - (void)deallocSharedLanYa
 {
+    self.isLanYaLianJie = NO;
     [self.babyTooth cancelScan];
     [self.babyTooth cancelAllPeripheralsConnection];
     self.lanYaStatus = NO;
@@ -64,10 +67,10 @@ static PDLanYaLianJie *config = nil;
 
 - (void)beginBlueToothWithDiverceName:(NSString *)diverceName
 {
+    [self.babyTooth cancelAllPeripheralsConnection];
     self.deviceName = diverceName;
     self.babyTooth = [BabyBluetooth shareBabyBluetooth];
     [self babyDelegateInit];
-    [self.babyTooth cancelAllPeripheralsConnection];
     //设置委托后直接可以使用，无需等待CBCentralManagerStatePoweredOn状态。
     self.babyTooth.scanForPeripherals().begin();
 }
@@ -141,12 +144,18 @@ static PDLanYaLianJie *config = nil;
     
     [self.babyTooth setBlockOnFailToConnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         weakSelf.lanYaStatus = NO;
+        if (weakSelf.isLanYaLianJie == NO) {
+            return ;
+        }
         [weakSelf.pdDelegate LanYaLianJieIsSuccess:NO];
     }];
     
     // 断开连接
     [self.babyTooth setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
         weakSelf.lanYaStatus = NO;
+        if (weakSelf.isLanYaLianJie == NO) {
+            return ;
+        }
         [weakSelf.pdDelegate LanYaLianJieIsSuccess:NO];
     }];
     
@@ -160,7 +169,7 @@ static PDLanYaLianJie *config = nil;
     [self.babyTooth setBlockOnDiscoverServicesAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, NSError *error) {
         
         for (CBService *s in peripheral.services) {
-            NSLog(@"发现设备的Services的委托  : %@     %@", s.UUID.UUIDString, weakSelf.serviceName);
+            PDLog(@"发现设备的Services的委托  : %@     %@", s.UUID.UUIDString, weakSelf.serviceName);
             if ([s.UUID.UUIDString isEqualToString:weakSelf.serviceName]) {
                 weakSelf.service = s;
             }
@@ -170,7 +179,7 @@ static PDLanYaLianJie *config = nil;
     
     // 发现特性
     [self.babyTooth setBlockOnDiscoverCharacteristicsAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
-        NSLog(@"setBlockOnDiscoverCharacteristicsAtChannel  : %@,  %@", service.UUID.UUIDString, weakSelf.service.UUID.UUIDString);
+        PDLog(@"setBlockOnDiscoverCharacteristicsAtChannel  : %@,  %@", service.UUID.UUIDString, weakSelf.service.UUID.UUIDString);
         if ([weakSelf.service.UUID.UUIDString isEqualToString: service.UUID.UUIDString]) {
             for (int row = 0; row < service.characteristics.count; row++) {
                 CBCharacteristic * characterist = [service.characteristics objectAtIndex:row];
@@ -192,6 +201,13 @@ static PDLanYaLianJie *config = nil;
                     }
                 }
             }
+        }
+    }];
+    
+    //读取rssi的委托
+    [self.babyTooth setBlockOnDidReadRSSI:^(NSNumber *RSSI, NSError *error) {
+        if ([weakSelf.pdDelegate respondsToSelector:@selector(LanYaXinHaoQiangDu:)]) {
+            [weakSelf.pdDelegate LanYaXinHaoQiangDu:RSSI];
         }
     }];
     
